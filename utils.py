@@ -11,10 +11,12 @@ square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','45
 unitlist = row_units + col_units + square_units
 
 # diagonal sudoku
-# diagonal1 = [a[0]+a[1] for a in zip(rows, cols)]
-# diagonal2 = [a[0]+a[1] for a in zip(rows, cols[::-1])]
-# unitlist.append(diagonal1)
-# unitlist.append(diagonal2)
+diagonal1 = [a[0]+a[1] for a in zip(rows, cols)]
+diagonal2 = [a[0]+a[1] for a in zip(rows, cols[::-1])]
+# only applies to diagonal boxes
+diagonal_unitlist = row_units + col_units + square_units
+diagonal_unitlist.append(diagonal1)
+diagonal_unitlist.append(diagonal2)
 
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
@@ -23,8 +25,8 @@ print("boxes: ", boxes)
 print("row_units: ", row_units)
 print("col_units: ", col_units)
 print("square_units: ", square_units)
-# print("diagonal1: ", diagonal1)
-# print("diagonal2: ", diagonal2)
+print("diagonal1: ", diagonal1)
+print("diagonal2: ", diagonal2)
 print("unitlist: ", unitlist)
 print("units: ", units)
 print("peers: ", peers)
@@ -102,6 +104,7 @@ def only_choice(values):
     return values
 
 def naked_twin(values):
+    # step 1: find values[s] with 2 digits
     twin_digits = []
     for box in values:
         if len(values[box]) == 2 and values[box] not in twin_digits:
@@ -109,21 +112,21 @@ def naked_twin(values):
             print("box: ", box, "with twin digits: ", values[box])
             print("twin_digits: ", twin_digits)
             print("twin digit length: ", len(twin_digits))
-
-            # enumerate create tuple (0, '69')
-            # for t in enumerate((twin_digits)):
-            #     print("t: ", t)
-
-            # doesn't work - can't split a list
-            # for t in twin_digits:
-            #     print("t: ", t)
-
-            # need to iterate twin_digits if there's more than 1 twin_digits
-            # for c in twin_digits[0]:
-            #     print("c value: ", c)
-            #     for peer in peers[t]:
-            #         print("peer: ", peer)
-            #         values[peer] = values[peer].replace(c, '')
+            for digit in twin_digits:
+                print("each digit in twin digits: ", digit)
+    # step 2: find peers that consist 2 digits in naked twin
+                for peer in peers[box]:
+                    if values[peer] == digit:
+                        print("matching naked twin: peer: ", peer + " with: ", values[peer] + " match with box: ", box + " with: ", digit)
+    # step 3: knock any 2 digits value from peers
+                        for x in digit:
+                            # need to exclude twin digit boxes
+                            non_twin_boxes = []
+                            for peer in peers[box]:
+                                non_twin_boxes.append(peer)
+                            # knock out matching digit
+                            for peer in peers[box]:
+                                values[peer] = values[peer].replace(digit, '')
 
     return values
 
