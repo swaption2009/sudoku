@@ -12,14 +12,13 @@ unitlist = row_units + col_units + square_units
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
-# print(boxes)
-# print(row_units[0])
-# print(col_units[0])
-# print(square_units[5])
-# print(unitlist)
-# print(units)
-# print(peers)
-
+print("boxes: ", boxes)
+print("row_units: ", row_units)
+print("col_units: ", col_units)
+print("square_units: ", square_units)
+print("unitlist: ", unitlist)
+print("units: ", units)
+print("peers: ", peers)
 
 def display(values):
     """
@@ -92,6 +91,32 @@ def only_choice(values):
                 values[dplaces[0]] = digit
     return values
 
+def naked_twin(values):
+    # step 1: find values[s] with 2 digits
+    twin_digits = []
+    for box in values:
+        if len(values[box]) == 2 and values[box] not in twin_digits:
+            twin_digits.append(values[box])
+            print("box: ", box, "with twin digits: ", values[box])
+            print("twin_digits: ", twin_digits)
+            print("twin digit length: ", len(twin_digits))
+            for digit in twin_digits:
+                print("each digit in twin digits: ", digit)
+    # step 2: find peers that consist 2 digits in naked twin
+                for peer in peers[box]:
+                    if values[peer] == digit:
+                        print("matching naked twin: peer: ", peer + " with: ", values[peer] + " match with box: ", box + " with: ", digit)
+    # step 3: knock any 2 digits value from peers
+                        for x in digit:
+                            # need to exclude twin digit boxes
+                            non_twin_boxes = []
+                            for peer in peers[box]:
+                                non_twin_boxes.append(peer)
+                            # knock out matching digit
+                            for peer in peers[box]:
+                                values[peer] = values[peer].replace(digit, '')
+
+    return values
 
 def reduce_puzzle(values):
     """
