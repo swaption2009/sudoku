@@ -9,40 +9,17 @@ row_units = [cross(r, cols) for r in rows]
 col_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
 unitlist = row_units + col_units + square_units
-<<<<<<< HEAD
-
-# diagonal sudoku
-diagonal1 = [a[0]+a[1] for a in zip(rows, cols)]
-diagonal2 = [a[0]+a[1] for a in zip(rows, cols[::-1])]
-# only applies to diagonal boxes
-diagonal_unitlist = row_units + col_units + square_units
-diagonal_unitlist.append(diagonal1)
-diagonal_unitlist.append(diagonal2)
-
-units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
-peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
 print("boxes: ", boxes)
 print("row_units: ", row_units)
 print("col_units: ", col_units)
 print("square_units: ", square_units)
-print("diagonal1: ", diagonal1)
-print("diagonal2: ", diagonal2)
 print("unitlist: ", unitlist)
 print("units: ", units)
 print("peers: ", peers)
-=======
+
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
-
-# print(boxes)
-# print(row_units[0])
-# print(col_units[0])
-# print(square_units[5])
-# print(unitlist)
-# print(units)
-# print(peers)
->>>>>>> parent of c42c551... diagonal sudoku and naked twin
 
 
 def display(values):
@@ -115,7 +92,6 @@ def only_choice(values):
             if len(dplaces) == 1:
                 values[dplaces[0]] = digit
     return values
-
 
 def naked_twin(values):
     # step 1: find values[s] with 2 digits
