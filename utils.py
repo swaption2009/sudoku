@@ -48,9 +48,12 @@ def grid_values(grid):
 
     values = []
     all_digits = '123456789'
+    # print("Grid in grid_values: ", grid)
     for c in grid:
+        # print("c in grid: ", c)
         if c == '.':
             values.append(all_digits)
+            # print("values in grid_values: ", values)
         elif c in all_digits:
             values.append(c)
     assert len(values) == 81
@@ -68,6 +71,7 @@ def eliminate(values):
         - values: Value in corresponding box, e.g. '8', or '123456789' if it is empty.
     """
     solved_values = [box for box in values.keys() if len(values[box]) == 1]
+    # print("solved values in eliminate: ", values)
     for box in solved_values:
         digit = values[box]
         for peer in peers[box]:
@@ -85,8 +89,10 @@ def only_choice(values):
     """
     # TODO: Implement only choice strategy here
     for unit in unitlist:
+        # print("unit inside only_choice", unit)
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
+            # print("dplace: ", dplaces)
             if len(dplaces) == 1:
                 values[dplaces[0]] = digit
     return values
@@ -94,28 +100,33 @@ def only_choice(values):
 def naked_twin(values):
     # step 1: find values[s] with 2 digits
     twin_digits = []
+    matching_twin_digits = []
+    print("values inside naked_twin: ", values)
+    # print("has length of: ", len(values))
     for box in values:
         if len(values[box]) == 2 and values[box] not in twin_digits:
             twin_digits.append(values[box])
             print("box: ", box, "with twin digits: ", values[box])
             print("twin_digits: ", twin_digits)
-            print("twin digit length: ", len(twin_digits))
+            # print("twin digit length: ", len(twin_digits))
             for digit in twin_digits:
                 print("each digit in twin digits: ", digit)
     # step 2: find peers that consist 2 digits in naked twin
                 for peer in peers[box]:
                     if values[peer] == digit:
-                        print("matching naked twin: peer: ", peer + " with: ", values[peer] + " match with box: ", box + " with: ", digit)
+                        if values[box] not in matching_twin_digits:
+                            matching_twin_digits.append(values[box])
+                            print("matching twin digits: ", matching_twin_digits)
+                            print("matching naked twin: peer: ", peer + " with: ", values[peer] + " match with box: ", box + " with: ", digit)
     # step 3: knock any 2 digits value from peers
-                        for x in digit:
-                            # need to exclude twin digit boxes
-                            non_twin_boxes = []
-                            for peer in peers[box]:
-                                non_twin_boxes.append(peer)
-                            # knock out matching digit
-                            for peer in peers[box]:
-                                values[peer] = values[peer].replace(digit, '')
+                            for digit in matching_twin_digits:
+                                print("digit: ", digit)
+                                for x in digit:
+                                    print("x: ", x)
+                                    for peer in peers[box]:
+                                        values[peer] = values[peer].replace(x, '')
 
+    print("values after naked twin: ", values)
     return values
 
 def reduce_puzzle(values):
@@ -134,6 +145,8 @@ def reduce_puzzle(values):
         values = eliminate(values)
         # Use the Only Choice Strategy
         values = only_choice(values)
+        # Use the Naked Twin Strategy
+        values = naked_twin(values)
         # Check how many boxes have a determined value, to compare
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         # If no new values were added, stop the loop.
