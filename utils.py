@@ -9,6 +9,7 @@ row_units = [cross(r, cols) for r in rows]
 col_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
 unitlist = row_units + col_units + square_units
+<<<<<<< HEAD
 
 # diagonal sudoku
 diagonal1 = [a[0]+a[1] for a in zip(rows, cols)]
@@ -30,6 +31,18 @@ print("diagonal2: ", diagonal2)
 print("unitlist: ", unitlist)
 print("units: ", units)
 print("peers: ", peers)
+=======
+units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
+peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
+
+# print(boxes)
+# print(row_units[0])
+# print(col_units[0])
+# print(square_units[5])
+# print(unitlist)
+# print(units)
+# print(peers)
+>>>>>>> parent of c42c551... diagonal sudoku and naked twin
 
 
 def display(values):
@@ -103,6 +116,7 @@ def only_choice(values):
                 values[dplaces[0]] = digit
     return values
 
+
 def naked_twin(values):
     # step 1: find values[s] with 2 digits
     twin_digits = []
@@ -140,26 +154,17 @@ def reduce_puzzle(values):
     """
     stalled = False
     while not stalled:
-        print("original values: ", values)
         # Check how many boxes have a determined value
         solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
-        print("number of solved values before: ", solved_values_before)
         # Use the Eliminate Strategy
         values = eliminate(values)
-        print("solved values after elimination: ", values)
         # Use the Only Choice Strategy
         values = only_choice(values)
-        print("solved values after only_choice: ", values)
-        # Use Naked Twin Strategy
-        values = naked_twin(values)
-        print("solved values after naked_twin: ", values)
         # Check how many boxes have a determined value, to compare
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
-        print("number of solved values after: ", solved_values_after)
         # If no new values were added, stop the loop.
         stalled = solved_values_before == solved_values_after
         # Sanity check, return False if there is a box with zero available values:
         if len([box for box in values.keys() if len(values[box]) == 0]):
             return False
-    print("values from reduce puzzle function: ", values)
     return values
