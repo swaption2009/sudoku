@@ -9,6 +9,8 @@ row_units = [cross(r, cols) for r in rows]
 col_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
 unitlist = row_units + col_units + square_units
+units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
+peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
 print("boxes: ", boxes)
 print("row_units: ", row_units)
@@ -17,10 +19,6 @@ print("square_units: ", square_units)
 print("unitlist: ", unitlist)
 print("units: ", units)
 print("peers: ", peers)
-
-units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
-peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
-
 
 def display(values):
     """
