@@ -95,38 +95,33 @@ def only_choice(values):
             # print("dplace: ", dplaces)
             if len(dplaces) == 1:
                 values[dplaces[0]] = digit
+
     return values
 
 def naked_twin(values):
-    # step 1: find values[s] with 2 digits
-    twin_digits = []
-    matching_twin_digits = []
-    print("values inside naked_twin: ", values)
-    # print("has length of: ", len(values))
-    for box in values:
-        if len(values[box]) == 2 and values[box] not in twin_digits:
-            twin_digits.append(values[box])
-            print("box: ", box, "with twin digits: ", values[box])
-            print("twin_digits: ", twin_digits)
-            # print("twin digit length: ", len(twin_digits))
-            for digit in twin_digits:
-                print("each digit in twin digits: ", digit)
-    # step 2: find peers that consist 2 digits in naked twin
-                for peer in peers[box]:
-                    if values[peer] == digit:
-                        if values[box] not in matching_twin_digits:
-                            matching_twin_digits.append(values[box])
-                            print("matching twin digits: ", matching_twin_digits)
-                            print("matching naked twin: peer: ", peer + " with: ", values[peer] + " match with box: ", box + " with: ", digit)
-    # step 3: knock any 2 digits value from peers
-                            for digit in matching_twin_digits:
-                                print("digit: ", digit)
-                                for x in digit:
-                                    print("x: ", x)
-                                    for peer in peers[box]:
-                                        values[peer] = values[peer].replace(x, '')
+    twins = []
+    for k1, v1 in values.items():
+        if len(v1) == 2:
+            for k2, v2 in values.items():
+                if k1 == k2:
+                    break
+                if v1 == v2 and v1 not in twins:
+                    twins.append(v1)
+                    # print("found matching twin digit: ", twins)
 
-    print("values after naked twin: ", values)
+    for twin in twins:
+        # print("twin: ", twin)
+        for i in twin:
+            # print("i: ", i)
+            for box in units:
+                # print("box: ", box)
+                # print("value: ", values[box])
+                for value in values[box]:
+                    if values == i:
+                        # print("value: ", value)
+                        values[box] = values[box].replace(i, '')
+
+    # print("values after naked twin: ", values)
     return values
 
 def reduce_puzzle(values):
